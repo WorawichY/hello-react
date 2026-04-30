@@ -1,0 +1,21 @@
+.weather {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card-bg);
+  padding: 10px 15px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.icon {
+  font-size: 1.5rem;
+}
+
+.temp {
+  font-weight: bold;
+  color: var(--primary-color);
+}
