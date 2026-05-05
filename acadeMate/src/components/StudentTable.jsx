@@ -26,13 +26,13 @@ function StudentTable({ students, onDelete }) {
             <td className="gpa-cell">{student.gpa.toFixed(2)}</td>
             <td className="actions-cell">
               <Link to={`/edit/${student.id}`} className="btn-edit">
-                Edit
+                📝 Edit
               </Link>
               <button 
                 onClick={() => onDelete(student.id)} 
                 className="btn-delete"
               >
-                Delete
+                🗑️ Delete
               </button>
             </td>
           </tr>

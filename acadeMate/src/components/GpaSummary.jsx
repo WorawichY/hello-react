@@ -9,20 +9,32 @@ function GpaSummary({ students }) {
   return (
     <div className="gpa-summary">
       <div className="stat-card">
-        <span className="stat-label">Students</span>
-        <span className="stat-value">{students.length}</span>
+        <span className="stat-label">Total Students</span>
+        <div className="stat-value-container">
+          <span className="stat-icon">👥</span>
+          <span className="stat-value">{students.length}</span>
+        </div>
       </div>
       <div className="stat-card">
         <span className="stat-label">Avg GPA</span>
-        <span className="stat-value">{average}</span>
+        <div className="stat-value-container">
+          <span className="stat-icon">📊</span>
+          <span className="stat-value">{average}</span>
+        </div>
       </div>
       <div className="stat-card highlight">
-        <span className="stat-label">Highest</span>
-        <span className="stat-value">{highest}</span>
+        <span className="stat-label">Highest GPA</span>
+        <div className="stat-value-container">
+          <span className="stat-icon">⭐</span>
+          <span className="stat-value">{highest}</span>
+        </div>
       </div>
       <div className="stat-card">
-        <span className="stat-label">Lowest</span>
-        <span className="stat-value">{lowest}</span>
+        <span className="stat-label">Lowest GPA</span>
+        <div className="stat-value-container">
+          <span className="stat-icon">📉</span>
+          <span className="stat-value">{lowest}</span>
+        </div>
       </div>
     </div>
   );

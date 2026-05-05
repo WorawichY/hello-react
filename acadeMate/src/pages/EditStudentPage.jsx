@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { updateStudent } from "../features/students/studentsSlice";
@@ -13,24 +13,14 @@ function EditStudentPage() {
     state.students.list.find((s) => s.id === parseInt(id))
   );
 
+  // Initialize state directly from student if found
   const [formData, setFormData] = useState({
-    name: "",
-    studentId: "",
-    major: "",
-    gpa: ""
+    name: student?.name || "",
+    studentId: student?.studentId || "",
+    major: student?.major || "",
+    gpa: student?.gpa || ""
   });
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (student) {
-      setFormData({
-        name: student.name,
-        studentId: student.studentId,
-        major: student.major,
-        gpa: student.gpa
-      });
-    }
-  }, [student]);
 
   if (!student) {
     return (

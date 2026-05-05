@@ -1,8 +1,8 @@
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { deleteStudent } from "../features/students/studentsSlice";
+import { addStudent, deleteStudent } from "../features/students/studentsSlice";
 import GpaSummary from "../components/GpaSummary";
 import StudentTable from "../components/StudentTable";
+import AddStudentForm from "../components/AddStudentForm";
 
 function HomePage() {
   const dispatch = useDispatch();
@@ -14,17 +14,22 @@ function HomePage() {
     }
   };
 
+  const handleAdd = (newStudent) => {
+    dispatch(addStudent(newStudent));
+  };
+
   return (
     <>
       <div className="page-header">
-        <h2>Student Dashboard</h2>
-        <Link to="/add" className="btn-primary">
-          + Add New Student
-        </Link>
+        <h2>Dashboard</h2>
       </div>
       
       <GpaSummary students={students} />
       
+      <div className="section-container" style={{marginBottom: '2rem'}}>
+        <AddStudentForm onAddStudent={handleAdd} />
+      </div>
+
       <div className="section-container">
         <StudentTable students={students} onDelete={handleDelete} />
       </div>

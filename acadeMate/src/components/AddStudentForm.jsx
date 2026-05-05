@@ -31,30 +31,30 @@ function AddStudentForm({ onAddStudent }) {
   }
   return (
     <form className="add-form" onSubmit={handleSubmit}>
-      <h3>Add New Student</h3>
+      <h3>✨ Add New Student</h3>
       {error && <p className="form-error">{error}</p>}
       <div className="form-row">
         <input
           name="name"
-          placeholder="Full Name *"
+          placeholder="👤 Full Name *"
           value={formData.name}
           onChange={handleChange}
         />
         <input
           name="studentId"
-          placeholder="Student ID *"
+          placeholder="🆔 Student ID *"
           value={formData.studentId}
           onChange={handleChange}
         />
         <input
           name="major"
-          placeholder="Major"
+          placeholder="🎓 Major"
           value={formData.major}
           onChange={handleChange}
         />
         <input
           name="gpa"
-          placeholder="GPA (0.0–4.0)"
+          placeholder="📈 GPA"
           value={formData.gpa}
           onChange={handleChange}
           type="number"
@@ -63,7 +63,7 @@ function AddStudentForm({ onAddStudent }) {
           max="4"
         />
         <button type="submit" className="btn-primary">
-          + Add Student
+          🚀 Add Student
         </button>
       </div>
     </form>
