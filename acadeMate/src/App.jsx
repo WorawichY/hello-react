@@ -1,25 +1,31 @@
+import { useSelector, useDispatch } from "react-redux";
+import { addStudent } from "./features/students/studentsSlice";
 import "./App.css";
 import StudentTable from "./components/StudentTable";
 import GpaSummary from "./components/GpaSummary";
 import AddStudentForm from "./components/AddStudentForm";
+
 function App() {
-  // useState IS GONE — state now lives in the Redux store.
-  // Empty stubs keep the UI from crashing until Session 3
-  // connects each component to Redux via useSelector.
+  const dispatch = useDispatch();
+  // Select students from the Redux store
+  const students = useSelector((state) => state.students.list);
+
+  const handleAddStudent = (newStudent) => {
+    dispatch(addStudent(newStudent));
+  };
+
   return (
     <div className="app-container">
       <header className="app-header">
         <h1>AcadeMate — Session 2 Redux Migration</h1>
       </header>
       <main className="app-main">
-        {/* Session 3: replace [] with useSelector(selectAllStudents) */}
-        <GpaSummary students={[]} />
-        {/* Session 3: dispatch(addStudent(formData)) */}
-        <AddStudentForm onAddStudent={() => {}} />
-        {/* Session 3: replace [] with useSelector(selectAllStudents) */}
-        <StudentTable students={[]} />
+        <GpaSummary students={students} />
+        <AddStudentForm onAddStudent={handleAddStudent} />
+        <StudentTable students={students} />
       </main>
     </div>
   );
 }
+
 export default App;
