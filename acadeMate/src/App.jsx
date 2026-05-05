@@ -1,30 +1,25 @@
-import { useSelector, useDispatch } from "react-redux";
-import { addStudent } from "./features/students/studentsSlice";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-import StudentTable from "./components/StudentTable";
-import GpaSummary from "./components/GpaSummary";
-import AddStudentForm from "./components/AddStudentForm";
+import HomePage from "./pages/HomePage";
+import AddStudentPage from "./pages/AddStudentPage";
+import EditStudentPage from "./pages/EditStudentPage";
 
 function App() {
-  const dispatch = useDispatch();
-  // Select students from the Redux store
-  const students = useSelector((state) => state.students.list);
-
-  const handleAddStudent = (newStudent) => {
-    dispatch(addStudent(newStudent));
-  };
-
   return (
-    <div className="app-container">
-      <header className="app-header">
-        <h1>AcadeMate — Session 2 Redux Migration</h1>
-      </header>
-      <main className="app-main">
-        <GpaSummary students={students} />
-        <AddStudentForm onAddStudent={handleAddStudent} />
-        <StudentTable students={students} />
-      </main>
-    </div>
+    <Router>
+      <div className="app-container">
+        <header className="app-header">
+          <h1>AcadeMate — Redux & Router Edition</h1>
+        </header>
+        <main className="app-main">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/add" element={<AddStudentPage />} />
+            <Route path="/edit/:id" element={<EditStudentPage />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 

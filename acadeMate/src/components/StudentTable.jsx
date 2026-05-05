@@ -1,4 +1,6 @@
-function StudentTable({ students }) {
+import { Link } from "react-router-dom";
+
+function StudentTable({ students, onDelete }) {
   if (students.length === 0) {
     return <p className="empty-state">No students yet. Add one above!</p>;
   }
@@ -11,6 +13,7 @@ function StudentTable({ students }) {
           <th>Student ID</th>
           <th>Major</th>
           <th>GPA</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -21,6 +24,17 @@ function StudentTable({ students }) {
             <td>{student.studentId}</td>
             <td>{student.major}</td>
             <td className="gpa-cell">{student.gpa.toFixed(2)}</td>
+            <td className="actions-cell">
+              <Link to={`/edit/${student.id}`} className="btn-edit">
+                Edit
+              </Link>
+              <button 
+                onClick={() => onDelete(student.id)} 
+                className="btn-delete"
+              >
+                Delete
+              </button>
+            </td>
           </tr>
         ))}
       </tbody>
