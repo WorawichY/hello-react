@@ -10,6 +10,10 @@ function GradesPage() {
 
   const [formData, setFormData] = useState({ studentId: "", courseId: "", score: "" });
 
+  // Helper to find names for the IDs
+  const getStudentName = (id) => students.find(s => s.id === Number(id))?.name || "Unknown";
+  const getCourseTitle = (id) => courses.find(c => c.id === Number(id))?.title || "Unknown";
+
   // Calculation Logic: Score (0-100) -> Grade (A-F)
   const calculateGrade = (score) => {
     const s = parseFloat(score);

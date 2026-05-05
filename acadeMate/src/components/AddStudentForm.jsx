@@ -1,34 +1,40 @@
 import { useState } from "react";
-const EMPTY_FORM = { name: "", studentId: "", major: "", gpa: "" };
-function AddStudentForm({ onAddStudent }) {
-  const [formData, setFormData] = useState(EMPTY_FORM);
+
+function AddStudentForm({ onAddStudent, courses = [] }) {
+  const [formData, setFormData] = useState({ 
+    name: "", 
+    studentId: "", 
+    major: "", 
+    courseId: "" 
+  });
   const [error, setError] = useState("");
-  // Single handler for ALL inputs via computed property name
+
+  // Dynamically get unique departments from the course list
+  const departments = [...new Set(courses.map(c => c.dept))].filter(Boolean);
+
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
+
   function handleSubmit(e) {
     e.preventDefault();
-    // Validation
-    if (!formData.name.trim() || !formData.studentId.trim()) {
-      setError("Name and Student ID are required.");
+    if (!formData.name.trim() || !formData.studentId.trim() || !formData.major) {
+      setError("Name, ID, and Major are required! ⚠️");
       return;
     }
-    const gpaNum = parseFloat(formData.gpa);
-    if (isNaN(gpaNum) || gpaNum < 0 || gpaNum > 4.0) {
-      setError("GPA must be a number between 0.0 and 4.0.");
-      return;
-    }
+
     onAddStudent({
-      id: Date.now(), // Temporary ID — Session 4 uses API-generated IDs
+      id: Date.now(),
       name: formData.name.trim(),
       studentId: formData.studentId.trim(),
-      major: formData.major.trim() || "Undeclared",
-      gpa: gpaNum,
+      major: formData.major,
+      initialCourseId: formData.courseId ? Number(formData.courseId) : null
     });
-    setFormData(EMPTY_FORM); // Reset form after successful submit
+
+    setFormData({ name: "", studentId: "", major: "", courseId: "" });
     setError("");
   }
+
   return (
     <form className="add-form" onSubmit={handleSubmit}>
       <h3>✨ Add New Student</h3>
@@ -46,22 +52,31 @@ function AddStudentForm({ onAddStudent }) {
           value={formData.studentId}
           onChange={handleChange}
         />
-        <input
-          name="major"
-          placeholder="🎓 Major"
-          value={formData.major}
+        <select 
+          name="major" 
+          value={formData.major} 
           onChange={handleChange}
-        />
-        <input
-          name="gpa"
-          placeholder="📈 GPA"
-          value={formData.gpa}
+        >
+          <option value="">🎓 Select Major *</option>
+          {departments.map(dept => (
+            <option key={dept} value={dept}>{dept}</option>
+          ))}
+          {departments.length === 0 && <option disabled>Please add a course first</option>}
+        </select>
+        
+        <select 
+          name="courseId" 
+          value={formData.courseId} 
           onChange={handleChange}
-          type="number"
-          step="0.01"
-          min="0"
-          max="4"
-        />
+        >
+          <option value="">📚 Enroll in Subject</option>
+          {courses.map(course => (
+            <option key={course.id} value={course.id}>
+              {course.code}: {course.title}
+            </option>
+          ))}
+        </select>
+
         <button type="submit" className="btn-primary">
           🚀 Add Student
         </button>
