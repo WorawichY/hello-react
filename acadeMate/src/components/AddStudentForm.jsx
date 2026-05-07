@@ -1,16 +1,16 @@
 import { useState } from "react";
 
 function AddStudentForm({ onAddStudent, courses = [] }) {
-  const [formData, setFormData] = useState({ 
-    name: "", 
-    studentId: "", 
-    major: "", 
-    courseId: "" 
+  const [formData, setFormData] = useState({
+    name: "",
+    studentId: "",
+    major: "",
+    courseId: "",
   });
   const [error, setError] = useState("");
 
   // Dynamically get unique departments from the course list
-  const departments = [...new Set(courses.map(c => c.dept))].filter(Boolean);
+  const departments = [...new Set(courses.map((c) => c.dept))].filter(Boolean);
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,7 +18,11 @@ function AddStudentForm({ onAddStudent, courses = [] }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.studentId.trim() || !formData.major) {
+    if (
+      !formData.name.trim() ||
+      !formData.studentId.trim() ||
+      !formData.major
+    ) {
       setError("Name, ID, and Major are required! ⚠️");
       return;
     }
@@ -28,7 +32,7 @@ function AddStudentForm({ onAddStudent, courses = [] }) {
       name: formData.name.trim(),
       studentId: formData.studentId.trim(),
       major: formData.major,
-      initialCourseId: formData.courseId ? Number(formData.courseId) : null
+      initialCourseId: formData.courseId ? Number(formData.courseId) : null,
     });
 
     setFormData({ name: "", studentId: "", major: "", courseId: "" });
@@ -52,25 +56,25 @@ function AddStudentForm({ onAddStudent, courses = [] }) {
           value={formData.studentId}
           onChange={handleChange}
         />
-        <select 
-          name="major" 
-          value={formData.major} 
-          onChange={handleChange}
-        >
+        <select name="major" value={formData.major} onChange={handleChange}>
           <option value="">🎓 Select Major *</option>
-          {departments.map(dept => (
-            <option key={dept} value={dept}>{dept}</option>
+          {departments.map((dept) => (
+            <option key={dept} value={dept}>
+              {dept}
+            </option>
           ))}
-          {departments.length === 0 && <option disabled>Please add a course first</option>}
+          {departments.length === 0 && (
+            <option disabled>Please add a course first</option>
+          )}
         </select>
-        
-        <select 
-          name="courseId" 
-          value={formData.courseId} 
+
+        <select
+          name="courseId"
+          value={formData.courseId}
           onChange={handleChange}
         >
           <option value="">📚 Enroll in Subject</option>
-          {courses.map(course => (
+          {courses.map((course) => (
             <option key={course.id} value={course.id}>
               {course.code}: {course.title}
             </option>
