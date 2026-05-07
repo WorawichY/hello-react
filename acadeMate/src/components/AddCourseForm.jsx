@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addCourse } from '../features/courses/coursesSlice';
 
-const EMPTY_FORM = { code: '', title: '', credits: '', dept: '' };
+const EMPTY_FORM = { code: '', title: '', credit: '', instructor: '' };
 
 function AddCourseForm() {
     const dispatch = useDispatch();
@@ -15,22 +15,22 @@ function AddCourseForm() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!formData.code.trim() || !formData.title.trim()) {
-            setError('Course code and title are required.');
+        if (!formData.code.trim() || !formData.title.trim() || !formData.instructor.trim()) {
+            setError('Course code, title, and instructor are required.');
             return;
         }
-        const creditsNum = parseInt(formData.credits, 10);
-        if (isNaN(creditsNum) || creditsNum <= 0) {
-            setError('Credits must be a positive number.');
+        const creditNum = parseInt(formData.credit, 10);
+        if (isNaN(creditNum) || creditNum <= 0) {
+            setError('Credit must be a positive number.');
             return;
         }
 
         dispatch(addCourse({
-            id: Date.now(),
+            id: Date.now().toString(),
             code: formData.code.trim().toUpperCase(),
             title: formData.title.trim(),
-            credits: creditsNum,
-            dept: formData.dept.trim() || 'General',
+            credit: creditNum,
+            instructor: formData.instructor.trim(),
         }));
 
         setFormData(EMPTY_FORM);
@@ -44,8 +44,8 @@ function AddCourseForm() {
             <div className="form-row">
                 <input name="code" placeholder="Course Code *" value={formData.code} onChange={handleChange} />
                 <input name="title" placeholder="Course Title *" value={formData.title} onChange={handleChange} />
-                <input name="credits" placeholder="Credits" type="number" min="1" value={formData.credits} onChange={handleChange} />
-                <input name="dept" placeholder="Department" value={formData.dept} onChange={handleChange} />
+                <input name="credit" placeholder="Credit (Units) *" type="number" min="1" value={formData.credit} onChange={handleChange} />
+                <input name="instructor" placeholder="Instructor Name *" value={formData.instructor} onChange={handleChange} />
                 <button type="submit" className="btn-primary">+ Add Course</button>
             </div>
         </form>

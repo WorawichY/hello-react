@@ -13,19 +13,19 @@ function GradeList() {
         return <p className="empty-state">No grades recorded yet. Add one above!</p>;
     }
 
-    const getStudentName = (id) => students.find((s) => s.id === id)?.name || 'Unknown';
-    const getCourseCode = (id) => courses.find((c) => c.id === id)?.code || 'Unknown';
+    const getStudentName = (id) => students.find((s) => s.id.toString() === id.toString())?.name || 'Unknown';
+    const getCourseCode = (id) => courses.find((c) => c.id.toString() === id.toString())?.code || 'Unknown';
 
     return (
         <div className="grades-card">
-            <h2>Grade Records</h2>
+            <h2>Academic Performance Records</h2>
             <table className="course-table">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Student</th>
-                        <th>Course</th>
-                        <th>Grade</th>
+                        <th>Student Name</th>
+                        <th>Course Code</th>
+                        <th>Grade (GP)</th>
                         <th>Semester</th>
                         <th>Actions</th>
                     </tr>
@@ -35,12 +35,14 @@ function GradeList() {
                         <tr key={grade.id}>
                             <td>{index + 1}</td>
                             <td>{getStudentName(grade.studentId)}</td>
-                            <td>{getCourseCode(grade.courseId)}</td>
-                            <td>{grade.grade.toFixed(2)}</td>
+                            <td><strong>{getCourseCode(grade.courseId)}</strong></td>
+                            <td style={{ fontWeight: '600', color: grade.grade >= 3.5 ? 'var(--success-color)' : 'inherit' }}>
+                                {grade.grade.toFixed(2)}
+                            </td>
                             <td>{grade.semester}</td>
                             <td>
                                 <button type="button" className="btn-action delete" onClick={() => dispatch(deleteGrade(grade.id))}>
-                                    Delete
+                                    Remove
                                 </button>
                             </td>
                         </tr>

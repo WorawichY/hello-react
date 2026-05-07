@@ -29,10 +29,10 @@ function AddGradeForm() {
             return;
         }
         dispatch(addGrade({
-            studentId: Number(formData.studentId),
-            courseId: Number(formData.courseId),
+            studentId: formData.studentId, // Keep as is (string)
+            courseId: formData.courseId,   // Keep as is (string)
             grade: gradeValue,
-            semester: formData.semester.trim() || '2024-1',
+            semester: formData.semester.trim() || 'Spring 2026',
         }));
         setFormData(EMPTY_FORM);
         setError('');
@@ -40,18 +40,18 @@ function AddGradeForm() {
 
     return (
         <form className="add-form" onSubmit={handleSubmit}>
-            <h3>Add Grade Record</h3>
+            <h3>Record New Grade</h3>
             {error && <p className="form-error">{error}</p>}
             <div className="form-row">
-                <select name="studentId" value={formData.studentId} onChange={handleChange}>
+                <select name="studentId" value={formData.studentId} onChange={handleChange} required>
                     <option value="">Select Student</option>
                     {students.map((student) => (
                         <option key={student.id} value={student.id}>
-                            {student.name}
+                            {student.name} ({student.studentId})
                         </option>
                     ))}
                 </select>
-                <select name="courseId" value={formData.courseId} onChange={handleChange}>
+                <select name="courseId" value={formData.courseId} onChange={handleChange} required>
                     <option value="">Select Course</option>
                     {courses.map((course) => (
                         <option key={course.id} value={course.id}>
@@ -68,10 +68,11 @@ function AddGradeForm() {
                     max="4"
                     value={formData.grade}
                     onChange={handleChange}
+                    required
                 />
                 <input
                     name="semester"
-                    placeholder="Semester"
+                    placeholder="Semester (e.g. 2026-1)"
                     value={formData.semester}
                     onChange={handleChange}
                 />

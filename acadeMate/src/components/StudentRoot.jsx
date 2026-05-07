@@ -4,7 +4,6 @@ import { fetchStudents } from '../features/students/studentsThunks';
 import GpaSummary from './GpaSummary';
 import AddStudentForm from './AddStudentForm';
 import StudentTable from './StudentTable';
-import '../App.css';
 
 function StudentRoot() {
   const dispatch = useDispatch();
@@ -12,16 +11,12 @@ function StudentRoot() {
   useEffect(() => {
     dispatch(fetchStudents());
   }, [dispatch]);
+
   return (
-    <div className="app-container">
-      <header className="app-header">
-        <h1>AcadeMate</h1>
-      </header>
-      <main className="app-main">
-        <GpaSummary />
-        <AddStudentForm />
-        <StudentTable />
-      </main>
+    <div className="students-root">
+      <GpaSummary />
+      <AddStudentForm />
+      <StudentTable />
     </div>
   );
 }

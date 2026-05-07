@@ -5,10 +5,10 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 const COURSE_API_URL = import.meta.env.VITE_COURSE_API_URL || 'https://REPLACE_WITH_MOCK_API_URL/coruses';
 
 const FALLBACK_COURSES = [
-    { id: 1, code: 'CS101', title: 'Data Structures', credits: 3, dept: 'CS' },
-    { id: 2, code: 'AI201', title: 'AI Fundamentals', credits: 3, dept: 'CS' },
-    { id: 3, code: 'WD301', title: 'Web Development', credits: 3, dept: 'IT' },
-    { id: 4, code: 'NS401', title: 'Network Security', credits: 3, dept: 'IT' },
+    { id: '1', code: 'CS101', title: 'Data Structures', credit: 3, instructor: 'Dr. Smith', createdAt: new Date().toISOString() },
+    { id: '2', code: 'AI201', title: 'AI Fundamentals', credit: 4, instructor: 'Prof. Miller', createdAt: new Date().toISOString() },
+    { id: '3', code: 'WD301', title: 'Web Development', credit: 3, instructor: 'Jan Rippin', createdAt: new Date().toISOString() },
+    { id: '4', code: 'NS401', title: 'Network Security', credit: 3, instructor: 'Human Integration Representative', createdAt: new Date().toISOString() },
 ];
 
 export const fetchCourses = createAsyncThunk(

@@ -9,7 +9,10 @@ const coursesSlice = createSlice({
     },
     reducers: {
         addCourse: (state, action) => {
-            state.list.push(action.payload);
+            state.list.push({
+                createdAt: new Date().toISOString(),
+                ...action.payload
+            });
         },
         deleteCourse: (state, action) => {
             state.list = state.list.filter(

@@ -5,9 +5,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 const STUDENT_API_URL = import.meta.env.VITE_STUDENT_API_URL || 'https://REPLACE_WITH_MOCK_API_URL/students';
 
 const FALLBACK_STUDENTS = [
-    { id: 1, name: 'Alice Brown', studentId: 'S1001', major: 'Computer Science', gpa: 3.8 },
-    { id: 2, name: 'Benjamin King', studentId: 'S1002', major: 'Information Technology', gpa: 3.2 },
-    { id: 3, name: 'Carla Diaz', studentId: 'S1003', major: 'Design', gpa: 3.9 },
+    { createdAt: "2026-05-06T22:14:10.405Z", name: 'Alice Brown', avatar: 'https://avatars.githubusercontent.com/u/32295160', studentId: 1001, major: 'Computer Science', gpa: 88, id: '1' },
+    { createdAt: "2026-05-06T22:14:10.405Z", name: 'Benjamin King', avatar: 'https://avatars.githubusercontent.com/u/32295160', studentId: 1002, major: 'Information Technology', gpa: 88, id: '2' },
+    { createdAt: "2026-05-06T22:14:10.405Z", name: 'Carla Diaz', avatar: 'https://avatars.githubusercontent.com/u/32295160', studentId: 1003, major: 'Design', gpa: 88, id: '3' },
 ];
 
 export const fetchStudents = createAsyncThunk(

@@ -13,16 +13,16 @@ function GradesRoot() {
 
     return (
         <div className="grades-root">
-            <section className="grades-summary-panel">
+            <div className="gpa-summary">
                 <div className="stat-card">
-                    <span className="stat-label">Grade Records</span>
+                    <span className="stat-label">Total Grade Entries</span>
                     <span className="stat-value">{grades.length}</span>
                 </div>
-                <div className="stat-card">
-                    <span className="stat-label">Average Grade</span>
+                <div className="stat-card highlight">
+                    <span className="stat-label">Class Avg Performance</span>
                     <span className="stat-value">{calculateAverage()}</span>
                 </div>
-            </section>
+            </div>
             <AddGradeForm />
             <GradeList />
         </div>

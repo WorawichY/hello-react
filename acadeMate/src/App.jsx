@@ -10,7 +10,10 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1>AcadeMate — Session 2 Redux Migration</h1>
+        <h1>AcadeMate Dashboard</h1>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+          Professional Academic Management & Performance Analytics
+        </p>
       </header>
       <main className="app-main">
         <div className="root-nav">

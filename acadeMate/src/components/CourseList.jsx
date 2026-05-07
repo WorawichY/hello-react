@@ -19,8 +19,9 @@ function CourseList() {
                         <th>#</th>
                         <th>Code</th>
                         <th>Title</th>
-                        <th>Credits</th>
-                        <th>Department</th>
+                        <th>Credit</th>
+                        <th>Instructor</th>
+                        <th>Created At</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -28,10 +29,11 @@ function CourseList() {
                     {courses.map((course, index) => (
                         <tr key={course.id}>
                             <td>{index + 1}</td>
-                            <td>{course.code}</td>
+                            <td><strong>{course.code}</strong></td>
                             <td>{course.title}</td>
-                            <td>{course.credits}</td>
-                            <td>{course.dept}</td>
+                            <td>{course.credit}</td>
+                            <td>{course.instructor}</td>
+                            <td>{new Date(course.createdAt).toLocaleDateString()}</td>
                             <td>
                                 <button type="button" className="btn-action delete" onClick={() => dispatch(deleteCourse(course.id))}>
                                     Delete

@@ -9,7 +9,11 @@ initialState: {
 },
 reducers: {
 	addStudent: (state, action) => {
-		state.list.push(action.payload);
+		state.list.push({
+            createdAt: new Date().toISOString(),
+            avatar: action.payload.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(action.payload.name)}`,
+            ...action.payload
+        });
 	},
 	updateStudent: (state, action) => {
 		const index = state.list.findIndex(student => student.id === action.payload.id);
