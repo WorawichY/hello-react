@@ -1,46 +1,37 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchCourses } from './coursesThunks';
 const coursesSlice = createSlice({
-  name: "courses",
-  initialState: {
-    list: [
-      {
-        id: 1,
-        code: "CS101",
-        title: "Data Structures",
-        credits: 3,
-        dept: "CS",
-      },
-      {
-        id: 2,
-        code: "AI201",
-        title: "AI Fundamentals",
-        credits: 3,
-        dept: "CS",
-      },
-      {
-        id: 3,
-        code: "WD301",
-        title: "Web Development",
-        credits: 3,
-        dept: "IT",
-      },
-      {
-        id: 4,
-        code: "NS401",
-        title: "Network Security",
-        credits: 3,
-        dept: "IT",
-      },
-    ],
-  },
-  reducers: {
-    addCourse: (state, action) => {
-      state.list.push(action.payload);
+    name: 'courses',
+    initialState: {
+        list: [],
+        status: 'idle',
+        error: null,
     },
-    deleteCourse: (state, action) => {
-      state.list = state.list.filter((c) => c.id !== action.payload);
+    reducers: {
+        addCourse: (state, action) => {
+            state.list.push(action.payload);
+        },
+        deleteCourse: (state, action) => {
+            state.list = state.list.filter(
+                c => c.id !== action.payload);
+        },
     },
-  },
+    extraReducers: builder => {
+        builder
+            .addCase(fetchCourses.pending, state => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(fetchCourses.fulfilled, (state, { payload }) => {
+                state.status = 'succeeded';
+                state.list = payload;
+            })
+            .addCase(fetchCourses.rejected, (state, { payload }) => {
+                state.status = 'failed';
+                state.error = payload;
+            });
+    },
 });
-export const { addCourse, deleteCourse } = coursesSlice.actions; // you dont have update??? 
+export const { addCourse, deleteCourse } = coursesSlice.actions;
+export const selectAllCourses = (state) => state.courses.list;
 export default coursesSlice.reducer;

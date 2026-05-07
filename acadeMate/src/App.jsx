@@ -1,61 +1,47 @@
-import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
-import "./App.css";
-import HomePage from "./pages/HomePage";
-import EditStudentPage from "./pages/EditStudentPage";
-import CoursesPage from "./pages/CoursesPage";
-import GradesPage from "./pages/GradesPage";
+import './App.css';
+import { useState } from 'react';
+import StudentRoot from './components/StudentRoot';
+import CoursesRoot from './components/CoursesRoot';
+import GradesRoot from './components/GradesRoot';
 
 function App() {
-  const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem("theme") === "dark";
-  });
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  }, [isDark]);
+  const [activeRoot, setActiveRoot] = useState('students');
 
   return (
-    <Router>
-      <div className="app-shell">
-        <nav className="navbar">
-          <div className="navbar-container">
-            <h1 className="navbar-logo">🎓 AcadeMate</h1>
-            <div className="navbar-links">
-              <NavLink to="/" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-                👥 Students
-              </NavLink>
-              <NavLink to="/courses" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-                📚 Courses
-              </NavLink>
-              <NavLink to="/grades" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-                📝 Grades
-              </NavLink>
-            </div>
-            <div className="navbar-actions">
-              <button 
-                className="theme-toggle" 
-                onClick={() => setIsDark(!isDark)}
-              >
-                {isDark ? "☀️ Light" : "🌙 Dark"}
-              </button>
-            </div>
-          </div>
-        </nav>
-        <div className="app-container">
-          <main className="app-main">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/edit/:id" element={<EditStudentPage />} />
-              <Route path="/courses" element={<CoursesPage />} />
-              <Route path="/grades" element={<GradesPage />} />
-            </Routes>
-          </main>
+    <div className="app-container">
+      <header className="app-header">
+        <h1>AcadeMate — Session 2 Redux Migration</h1>
+      </header>
+      <main className="app-main">
+        <div className="root-nav">
+          <button
+            className={activeRoot === 'students' ? 'tab active' : 'tab'}
+            onClick={() => setActiveRoot('students')}
+          >
+            Students
+          </button>
+          <button
+            className={activeRoot === 'grades' ? 'tab active' : 'tab'}
+            onClick={() => setActiveRoot('grades')}
+          >
+            Grades
+          </button>
+          <button
+            className={activeRoot === 'courses' ? 'tab active' : 'tab'}
+            onClick={() => setActiveRoot('courses')}
+          >
+            Courses
+          </button>
         </div>
-      </div>
-    </Router>
+        {activeRoot === 'students' ? (
+          <StudentRoot />
+        ) : activeRoot === 'grades' ? (
+          <GradesRoot />
+        ) : (
+          <CoursesRoot />
+        )}
+      </main>
+    </div>
   );
 }
-
 export default App;
