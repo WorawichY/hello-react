@@ -1,12 +1,17 @@
-import { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteStudent, updateStudent, selectAllStudents } from "../features/students/studentsSlice";
-import { selectStudentWithComputedGpaById, selectStudentsStatus } from "../features/students/selectors";
+import { makeSelectStudentWithComputedGpaById, selectStudentsStatus } from "../features/students/selectors";
 
-function StudentRow({ id, index, onDelete }) {
+const StudentRow = React.memo(({ id, index, onDelete }) => {
     const dispatch = useDispatch();
+    
+    // Memoize the selector instance for this specific row to prevent cache thrashing
+    const selectStudentWithComputedGpaById = useMemo(makeSelectStudentWithComputedGpaById, []);
     const student = useSelector(state => selectStudentWithComputedGpaById(state, id));
+    
     const [isEditing, setIsEditing] = useState(false);
+
     const [editForm, setEditForm] = useState(null);
     
     if (!student) return null;
@@ -87,7 +92,7 @@ function StudentRow({ id, index, onDelete }) {
             </td>
         </tr>
     );
-}
+});
 
 function StudentTable() {
     const dispatch = useDispatch();

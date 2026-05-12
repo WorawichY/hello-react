@@ -39,8 +39,8 @@ export const selectStudentsWithComputedGpa = createSelector(
     }
 );
 
-// NEW: Select a single student with computed GPA by ID
-export const selectStudentWithComputedGpaById = createSelector(
+// Factory pattern for parametric selector to prevent cache thrashing (Slide 9)
+export const makeSelectStudentWithComputedGpaById = () => createSelector(
     [
         (state, studentId) => selectStudentById(state, studentId),
         selectAllGrades,
@@ -64,9 +64,21 @@ export const selectAverageGpa = createSelector(
     }
 );
 
-export const selectHighAchieversCount = createSelector(
+export const selectHighAchievers = createSelector(
     [selectStudentsWithComputedGpa],
-    (studentsWithGpa) => {
-        return studentsWithGpa.filter(s => s.computedGpa >= 3.5).length;
-    }
+    (studentsWithGpa) => studentsWithGpa.filter(s => s.computedGpa >= 3.5)
+);
+
+export const selectHighAchieversCount = createSelector(
+    [selectHighAchievers],
+    (highAchievers) => highAchievers.length
+);
+
+export const selectGpaDistribution = createSelector(
+    [selectStudentsWithComputedGpa],
+    (studentsWithGpa) => ({
+        high: studentsWithGpa.filter(s => s.computedGpa >= 3.5).length,
+        medium: studentsWithGpa.filter(s => s.computedGpa >= 2.5 && s.computedGpa < 3.5).length,
+        low: studentsWithGpa.filter(s => s.computedGpa < 2.5).length,
+    })
 );
