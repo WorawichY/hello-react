@@ -1,10 +1,16 @@
-export const selectAllStudents = (state) => state.students.list;
+import { createSelector } from '@reduxjs/toolkit';
+import { selectAllStudents, selectStudentById } from './studentsSlice';
+
+export const selectStudentsStatus = state => state.students.status;
+export const selectStudentsError = state => state.students.error;
+
 export const selectAllGrades = (state) => state.grades.list;
 export const selectAllCourses = (state) => state.courses.list;
 
 // Helper to calculate GPA for a student
-const getStudentGpa = (studentId, grades, courses) => {
-    const studentGrades = grades.filter(g => g.studentId === studentId || g.studentId === studentId.toString() || g.studentId === Number(studentId));
+const getStudentGpa = (student, grades, courses) => {
+    if (!student) return 0;
+    const studentGrades = grades.filter(g => g.studentId === student.id || g.studentId === student.id.toString() || g.studentId === Number(student.id));
     if (studentGrades.length === 0) return 0;
 
     let totalPoints = 0;
@@ -23,27 +29,44 @@ const getStudentGpa = (studentId, grades, courses) => {
 };
 
 // Select all students with their computed GPA
-export const selectStudentsWithComputedGpa = (state) => {
-    const students = state.students.list;
-    const grades = state.grades.list;
-    const courses = state.courses.list;
+export const selectStudentsWithComputedGpa = createSelector(
+    [selectAllStudents, selectAllGrades, selectAllCourses],
+    (students, grades, courses) => {
+        return students.map(student => ({
+            ...student,
+            computedGpa: getStudentGpa(student, grades, courses)
+        }));
+    }
+);
 
-    return students.map(student => ({
-        ...student,
-        computedGpa: getStudentGpa(student.id, grades, courses)
-    }));
-};
+// NEW: Select a single student with computed GPA by ID
+export const selectStudentWithComputedGpaById = createSelector(
+    [
+        (state, studentId) => selectStudentById(state, studentId),
+        selectAllGrades,
+        selectAllCourses
+    ],
+    (student, grades, courses) => {
+        if (!student) return null;
+        return {
+            ...student,
+            computedGpa: getStudentGpa(student, grades, courses)
+        };
+    }
+);
 
-export const selectAverageGpa = (state) => {
-    const studentsWithGpa = selectStudentsWithComputedGpa(state);
-    if (studentsWithGpa.length === 0) return "0.00";
-    const total = studentsWithGpa.reduce((sum, s) => sum + s.computedGpa, 0);
-    return (total / studentsWithGpa.length).toFixed(2);
-};
+export const selectAverageGpa = createSelector(
+    [selectStudentsWithComputedGpa],
+    (studentsWithGpa) => {
+        if (studentsWithGpa.length === 0) return "0.00";
+        const total = studentsWithGpa.reduce((sum, s) => sum + s.computedGpa, 0);
+        return (total / studentsWithGpa.length).toFixed(2);
+    }
+);
 
-export const selectHighAchieversCount = (state) => {
-    const studentsWithGpa = selectStudentsWithComputedGpa(state);
-    return studentsWithGpa.filter(s => s.computedGpa >= 3.5).length;
-};
-
-export const selectStudentCount = (state) => state.students.list.length;
+export const selectHighAchieversCount = createSelector(
+    [selectStudentsWithComputedGpa],
+    (studentsWithGpa) => {
+        return studentsWithGpa.filter(s => s.computedGpa >= 3.5).length;
+    }
+);

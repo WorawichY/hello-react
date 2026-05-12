@@ -1,5 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
+// Helper for simulated delay
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 // Replace this URL with your mock API path if needed.
 // Example: VITE_COURSE_API_URL=https://69fc380afce564e259177e83.mockapi.io/coruses
 const COURSE_API_URL = import.meta.env.VITE_COURSE_API_URL || 'https://REPLACE_WITH_MOCK_API_URL/coruses';
@@ -14,6 +17,7 @@ const FALLBACK_COURSES = [
 export const fetchCourses = createAsyncThunk(
     'courses/fetchCourses',
     async (_, { rejectWithValue }) => {
+        await delay(1000); // Simulated delay
         if (COURSE_API_URL.includes('REPLACE_WITH_MOCK_API_URL')) {
             return FALLBACK_COURSES;
         }
