@@ -131,6 +131,7 @@ function StudentTable() {
         data: students = [],
         isLoading,
         isFetching,
+        isError,
         refetch,
     } = useGetStudentsQuery(undefined, {
         pollingInterval: 30_000,
@@ -143,6 +144,10 @@ function StudentTable() {
         if (window.confirm("Delete this student?")) {
             deleteStudent(id);
         }
+    }
+
+    if (isError) {
+        return <p className="empty-state" role="alert">Failed to load students. Please try again.</p>;
     }
 
     if (isLoading) {
