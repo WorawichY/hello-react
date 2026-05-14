@@ -1,19 +1,48 @@
 import React, { useState, useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { deleteStudent, updateStudent, selectAllStudents } from "../features/students/studentsSlice";
-import { makeSelectStudentWithComputedGpaById, selectStudentsStatus } from "../features/students/selectors";
+import { useSelector } from "react-redux";
+import {
+    useGetStudentsQuery,
+    useUpdateStudentMutation,
+    useDeleteStudentMutation,
+} from "../features/students/studentsApi";
+import { selectAllGrades, selectAllCourses } from "../features/students/selectors";
 
-const StudentRow = React.memo(({ id, index, onDelete }) => {
-    const dispatch = useDispatch();
-    
-    // Memoize the selector instance for this specific row to prevent cache thrashing
-    const selectStudentWithComputedGpaById = useMemo(makeSelectStudentWithComputedGpaById, []);
-    const student = useSelector(state => selectStudentWithComputedGpaById(state, id));
-    
+function computeGpa(student, grades, courses) {
+    const studentGrades = grades.filter(
+        (g) =>
+            g.studentId === student.id ||
+            g.studentId === student.id.toString() ||
+            g.studentId === Number(student.id)
+    );
+    if (studentGrades.length === 0) return 0;
+    let totalPoints = 0;
+    let totalCredits = 0;
+    studentGrades.forEach((gradeEntry) => {
+        const course = courses.find(
+            (c) =>
+                c.id === gradeEntry.courseId ||
+                c.id === gradeEntry.courseId.toString() ||
+                c.id === Number(gradeEntry.courseId)
+        );
+        if (course) {
+            const credit = Number(course.credit || course.credits || 0);
+            totalPoints += Number(gradeEntry.grade) * credit;
+            totalCredits += credit;
+        }
+    });
+    return totalCredits > 0 ? totalPoints / totalCredits : 0;
+}
+
+const StudentRow = React.memo(({ student, index, grades, courses, onDelete }) => {
+    const [updateStudent] = useUpdateStudentMutation();
     const [isEditing, setIsEditing] = useState(false);
-
     const [editForm, setEditForm] = useState(null);
-    
+
+    const computedGpa = useMemo(
+        () => computeGpa(student, grades, courses),
+        [student, grades, courses]
+    );
+
     if (!student) return null;
 
     const handleEdit = () => {
@@ -21,16 +50,13 @@ const StudentRow = React.memo(({ id, index, onDelete }) => {
         setIsEditing(true);
     };
 
-    const handleCancel = () => {
-        setIsEditing(false);
-    };
+    const handleCancel = () => setIsEditing(false);
 
-    const handleChange = (e) => {
+    const handleChange = (e) =>
         setEditForm({ ...editForm, [e.target.name]: e.target.value });
-    };
 
     const handleSave = () => {
-        dispatch(updateStudent(editForm));
+        updateStudent(editForm);
         setIsEditing(false);
     };
 
@@ -39,10 +65,10 @@ const StudentRow = React.memo(({ id, index, onDelete }) => {
             <tr className="editing-row">
                 <td>{index + 1}</td>
                 <td>
-                    <img 
-                        src={student.avatar} 
-                        alt={student.name} 
-                        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} 
+                    <img
+                        src={student.avatar}
+                        alt={student.name}
+                        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
                     />
                 </td>
                 <td><input name="name" value={editForm.name} onChange={handleChange} className="inline-edit-input" /></td>
@@ -61,15 +87,17 @@ const StudentRow = React.memo(({ id, index, onDelete }) => {
     }
 
     return (
-        <tr className={student.computedGpa >= 3.5 ? 'high-performance' : ''}>
+        <tr className={computedGpa >= 3.5 ? 'high-performance' : ''}>
             <td>{index + 1}</td>
             <td>
                 {student.avatar ? (
-                    <img 
-                        src={student.avatar} 
-                        alt={student.name} 
-                        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border-color)' }} 
-                        onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=random` }}
+                    <img
+                        src={student.avatar}
+                        alt={student.name}
+                        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border-color)' }}
+                        onError={(e) => {
+                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=random`;
+                        }}
                     />
                 ) : (
                     <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#e2e8f0' }} />
@@ -79,8 +107,8 @@ const StudentRow = React.memo(({ id, index, onDelete }) => {
             <td>{student.studentId}</td>
             <td>{student.major}</td>
             <td className="gpa-cell">
-                <span className={`gpa-badge ${student.computedGpa >= 3.5 ? 'high' : ''}`}>
-                    {student.computedGpa.toFixed(2)}
+                <span className={`gpa-badge ${computedGpa >= 3.5 ? 'high' : ''}`}>
+                    {computedGpa.toFixed(2)}
                 </span>
             </td>
             <td>{student.createdAt ? new Date(student.createdAt).toLocaleDateString() : 'N/A'}</td>
@@ -95,17 +123,29 @@ const StudentRow = React.memo(({ id, index, onDelete }) => {
 });
 
 function StudentTable() {
-    const dispatch = useDispatch();
-    const students = useSelector(selectAllStudents);
-    const status = useSelector(selectStudentsStatus);
+    const [deleteStudent] = useDeleteStudentMutation();
+    const grades = useSelector(selectAllGrades);
+    const courses = useSelector(selectAllCourses);
+
+    const {
+        data: students = [],
+        isLoading,
+        isFetching,
+        refetch,
+    } = useGetStudentsQuery(undefined, {
+        pollingInterval: 30_000,
+        refetchOnFocus: true,
+        refetchOnReconnect: true,
+        refetchOnMountOrArgChange: true,
+    });
 
     function handleDelete(id) {
         if (window.confirm("Delete this student?")) {
-            dispatch(deleteStudent(id));
+            deleteStudent(id);
         }
     }
 
-    if (status === 'loading' && students.length === 0) {
+    if (isLoading) {
         return (
             <div className="empty-state">
                 <div className="spinner" style={{ width: '30px', height: '30px', margin: '0 auto 1rem' }}></div>
@@ -120,12 +160,14 @@ function StudentTable() {
 
     return (
         <div className="table-container">
-            {status === 'loading' && students.length > 0 && (
-                <div className="table-overlay">
-                    <div className="spinner" style={{ width: '40px', height: '40px' }}></div>
-                    <p className="loading-text">Updating list...</p>
-                </div>
-            )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                {isFetching ? (
+                    <span style={{ fontSize: 12, color: '#3A5BA0' }}>↻ Syncing...</span>
+                ) : (
+                    <span />
+                )}
+                <button className="btn-action" onClick={refetch}>↻ Refresh</button>
+            </div>
             <div className="students-card">
                 <table className="student-table">
                     <thead>
@@ -142,11 +184,13 @@ function StudentTable() {
                     </thead>
                     <tbody>
                         {students.map((student, index) => (
-                            <StudentRow 
-                                key={student.id} 
-                                id={student.id} 
-                                index={index} 
-                                onDelete={handleDelete} 
+                            <StudentRow
+                                key={student.id}
+                                student={student}
+                                index={index}
+                                grades={grades}
+                                courses={courses}
+                                onDelete={handleDelete}
                             />
                         ))}
                     </tbody>
